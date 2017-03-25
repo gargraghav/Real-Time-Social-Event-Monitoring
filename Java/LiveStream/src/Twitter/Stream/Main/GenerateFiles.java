@@ -57,24 +57,25 @@ public class GenerateFiles {
 
             @Override
             public void onStatus(Status status) {
-                String tweet = "";
-                String hashtag = "";
-                HashtagEntity[] entity = status.getHashtagEntities(); //returns an array of hashtags mentioned in the tweet
-                for(int i = 0; i < entity.length; i++) {
-                    tweet += "#" + entity[i].getText() + " "; //appends # to the hashtag name
-                    hashtag += hashtag + "#" + entity[i].getText() + " ";
-                }
-                String content = status.getText(); //gets tweet content
-                tweet += content;
-                //System.out.println(tweet + "\n");
-                try {
-                    bwTweets.write(tweet + "\n");
-                    bwHashtags.write(hashtag + "\n");
-                    bwTweets.flush();
-                    bwHashtags.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if(status.getLang().equals("en")){
+                    String tweet = "";
+                    String hashtag = "";
+                    HashtagEntity[] entity = status.getHashtagEntities(); //returns an array of hashtags mentioned in the tweet
+                    for(int i = 0; i < entity.length; i++) {
+                        tweet += "#" + entity[i].getText() + " "; //appends # to the hashtag name
+                        hashtag += hashtag + "#" + entity[i].getText() + " ";
+                    }
+                    String content = status.getText(); //gets tweet content
+                    tweet += content;
+                    //System.out.println(tweet + "\n");
+                    try {
+                        bwTweets.write(tweet + "\n");
+                        bwHashtags.write(hashtag + "\n");
+                        bwTweets.flush();
+                        bwHashtags.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                 /*
                 User user = status.getUser();
@@ -82,6 +83,7 @@ public class GenerateFiles {
                 String profileLocation = user.getLocation();
                 long tweetId = status.getId();
                 */
+                }
             }
 
             @Override
@@ -98,11 +100,13 @@ public class GenerateFiles {
 
         };
 
+        /*
         FilterQuery fq = new FilterQuery();
         String keywords[] = {""};
         fq.track(keywords);
-
+        */
         twitterStream.addListener(listener);
-        twitterStream.filter(fq);
+        //twitterStream.filter(fq);
+        twitterStream.sample();
     }
 }
